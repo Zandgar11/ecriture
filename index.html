@@ -3,26 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mes Rédactions</title>
+    <title>Mon Site de Rédactions</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <header>
-        <h1>Mes Rédactions</h1>
+        <h1>Mon Site de Rédactions</h1>
+        <button id="admin-toggle">Activer le Mode Admin</button>
     </header>
+    
     <main>
-        <section id="new-post">
-            <h2>Nouvelle Rédaction</h2>
-            <form id="post-form">
-                <textarea id="content" placeholder="Écris ta rédaction ici..." required></textarea>
-                <button type="submit">Publier</button>
-            </form>
-        </section>
-        <section id="posts">
-            <h2>Rédactions Publiées</h2>
+        <section id="content">
             <div id="posts-container"></div>
         </section>
+        
+        <!-- Formulaire de suppression de post -->
+        <section id="admin-form-section" style="display: none;">
+            <h2>Supprimer une Rédaction</h2>
+            <form id="delete-form">
+                <input type="text" id="post-id" placeholder="ID du Post à Supprimer" required />
+                <button type="submit">Supprimer</button>
+            </form>
+        </section>
+        
     </main>
+    
     <script src="script.js"></script>
 </body>
 </html>
