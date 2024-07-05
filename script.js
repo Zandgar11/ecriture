@@ -1,31 +1,26 @@
-document.getElementById('post-form').addEventListener('submit', function(event) {
+const gistId = 'https://gist.github.com/Zandgar11/619e8deca7823c78006cd14efe68dfd5#file-posts-json';  // Remplace par l'ID de ton Gist
+const gistToken = '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';  // Remplace par ton jeton GitHub
+
+const gistUrl = `https://api.github.com/gists/${gistId}`;
+const postsUrl = `https://api.github.com/gists/${gistId}/files/posts.json`;
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadPosts();
+});
+
+document.getElementById('post-form').addEventListener('submit', async (event) => {
     event.preventDefault();
     const content = document.getElementById('content').value;
     if (content.trim()) {
-        addPost(content);
+        await addPost(content);
         document.getElementById('content').value = '';
+        loadPosts();
     }
 });
 
-function addPost(content) {
-    const posts = getPosts();
-    const newPost = { content: content };
-    posts.push(newPost);
-    savePosts(posts);
-    renderPosts();
-}
-
-function getPosts() {
-    const posts = localStorage.getItem('posts');
-    return posts ? JSON.parse(posts) : [];
-}
-
-function savePosts(posts) {
-    localStorage.setItem('posts', JSON.stringify(posts));
-}
-
-function renderPosts() {
-    const posts = getPosts();
+async function loadPosts() {
+    const response = await fetch(postsUrl);
+    const posts = await response.json();
     const postsContainer = document.getElementById('posts-container');
     postsContainer.innerHTML = '';
     posts.forEach(post => {
@@ -36,4 +31,23 @@ function renderPosts() {
     });
 }
 
-document.addEventListener('DOMContentLoaded', renderPosts);
+async function addPost(content) {
+    const response = await fetch(gistUrl, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `token ${gistToken}`
+        },
+        body: JSON.stringify({
+            files: {
+                'posts.json': {
+                    content: JSON.stringify([...await (await fetch(postsUrl)).json(), { content }])
+                }
+            }
+        })
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to add post: ${response.statusText}`);
+    }
+}
